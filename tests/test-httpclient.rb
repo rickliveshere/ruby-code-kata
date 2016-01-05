@@ -12,10 +12,13 @@ class TestHttpClient < Test::Unit::TestCase
   end
 
   def test_download_string_from_uri
+    expected = File.read("tests/wordlist.txt")
     actual = @client.download_string("http://codekata.com/data/wordlist.txt")
 
+    puts "Expected: " + expected 
+
     assert_true(actual.is_a? String)
-    assert_equal("test", actual,  "Expected string has been downloaded")
+    assert(actual.include?(expected), "Expected string has been downloaded")
   end
 
 end

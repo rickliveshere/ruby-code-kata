@@ -1,11 +1,11 @@
 
-class HttpClient
+require 'open-uri'
 
+class HttpClient
   def initialize()  
-    
   end
 
   def download_string(uri)
-    "test"
+    open(uri) { |io| io.read }
   end
 end
