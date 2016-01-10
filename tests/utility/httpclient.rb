@@ -1,5 +1,5 @@
 require "test/unit"
-require_relative "../src/utility/httpclient"
+require_relative "../../src/utility/httpclient"
 
 class TestHttpClient < Test::Unit::TestCase
 
@@ -8,7 +8,7 @@ class TestHttpClient < Test::Unit::TestCase
   end
 
   def teardown
-    ## Nothing really
+  ## Nothing really
   end
 
   def test_download_string_from_uri
