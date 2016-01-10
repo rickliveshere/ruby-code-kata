@@ -1,11 +1,13 @@
 require "test/unit"
+require_relative "../../src/utility/httpclient"
 require_relative '../../src/services/wordservice'
 require_relative '../../src/data/wordrepository'
 
 class TestWordService < Test::Unit::TestCase
 
   def setup
-    repository = WordRepository.new()
+    data_source = HttpClient.new()
+    repository = WordRepository.new(data_source)
     @service = WordService.new(repository)
   end
 
@@ -17,7 +19,7 @@ class TestWordService < Test::Unit::TestCase
     input = ""
     output = "dog"
 
-    assert_raise(RuntimeError, "Missing input") do
+    exception = assert_raise(RuntimeError, "Missing input") do
       @service.transform(input, output)
     end
   end
@@ -35,7 +37,7 @@ class TestWordService < Test::Unit::TestCase
     input = nil
     output = "dog"
 
-    assert_raise(RuntimeError) do
+    assert_raise(RuntimeError, "Missing input") do
       @service.transform(input, output)
     end
   end
@@ -44,23 +46,45 @@ class TestWordService < Test::Unit::TestCase
     input = "cat"
     output = nil
 
-    assert_raise(RuntimeError) do
+    assert_raise(RuntimeError, "Missing expected output") do
       @service.transform(input, output)
     end
   end
 
-  #def test_can_transform_cat_into_cot
-  #  input = "cat"
-  #  output = "dog"
+  def test_transform_raise_error_if_input_not_string
+    input = 123
+    output = "dog"
 
-  #  expected = [input, "cot", "cog", output]
+    assert_raise(RuntimeError, "Input not a string") do
+      @service.transform(input, output)
+    end
+  end
 
-  #  actual = @service.transform(input, output)
+  def test_transform_raise_error_if_expected_output_not_string
+    input = "cat"
+    output = 123
 
-  #  puts "Expected: " + expected 
+    assert_raise(RuntimeError, "Expected output not a string") do
+      @service.transform(input, output)
+    end
+  end
 
-  #  assert_true(actual.is_a? String)
-  #  assert_equal(expected, actual, "cat has not been transformed into cot")
-  #end
+  def test_transform_raise_error_if_input_and_expected_output_length_not_equal
+    input = "cat"
+    output = "doggy"
+
+    assert_raise(RuntimeError, "Input length must equal expected_output length") do
+      @service.transform(input, output)
+    end
+  end
+
+  def test_can_transform_return_array
+    input = "cat"
+    output = "dog"
+
+    result = @service.transform(input, output)
+
+    assert_true(result.is_a? Array)
+  end
 
 end
